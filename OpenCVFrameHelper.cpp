@@ -7,6 +7,7 @@
 #include "OpenCVFrameHelper.h"
 #include <opencv2/video/tracking.hpp>
 #include <iostream>
+#include <fstream>
 
 #pragma comment (lib, "opencv_core249d.lib")
 #pragma comment (lib, "opencv_highgui249d.lib")
@@ -16,6 +17,8 @@
 
 
 using namespace Microsoft::KinectBridge;
+using namespace cv;
+using namespace std;
 
 /// <summary>
 /// Converts from Kinect color frame data into a RGB OpenCV image matrix. 
@@ -94,10 +97,16 @@ HRESULT OpenCVFrameHelper::GetDepthData(Mat* pImage) const
 /// <returns>S_OK if successful, an error code otherwise</returns>
 HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage) const
 {
-	static Mat prevImage;
+	ofstream myfile;
+	myfile.open("example.txt", ios::out | ios::app);
+	myfile << "Beginning" << std::endl;
+	myfile.close();
+	//cv::TermCriteria termcrit(TermCriteria::COUNT + TermCriteria::EPS, 0.03);
+	//Size winSize(10, 10);
+	Mat prevImage;
     DWORD depthWidth, depthHeight;
-	static std::vector<cv::Point> prevFeatures;
-	static std::vector<cv::Point> currentFeatures(20);
+	static vector<cv::Point2f> prevFeatures;
+	static vector<cv::Point2f> currentFeatures(20);
 
     NuiImageResolutionToSize(m_depthResolution, depthWidth, depthHeight);
 
@@ -122,11 +131,15 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage) const
 		vector<uchar> status;
 		vector<float> err;
 		try {
+			//void calcOpticalFlowPyrLK(InputArray prevImg, InputArray nextImg, InputArray prevPts, InputOutputArray nextPts, 
+			// OutputArray status, OutputArray err, Size winSize = Size(21, 21), int maxLevel = 3, TermCriteria criteria = TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 30, 0.01), int flags = 0, double minEigThreshold = 1e-4)
 			cv::calcOpticalFlowPyrLK(prevImage, testImage, prevFeatures, currentFeatures,
 				status, err);
 		}
 		catch (cv::Exception ex) {
-			std::cout << "Exception: " << ex.what() << std::endl;
+
+			std::string errmsg(ex.what());
+			std::cout << "Exception: " << errmsg.c_str() << std::endl;
 		}
 	}
     for (UINT y = 0; y < depthHeight; ++y)
@@ -155,6 +168,10 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage) const
 
 	prevImage = testImage.clone();
 	prevFeatures = currentFeatures;
+	//ofstream myfile;
+	myfile.open("example.txt", ios::out | ios::app);
+	myfile << "Returning" << std::endl;
+	myfile.close();
     return S_OK;
 }
 
