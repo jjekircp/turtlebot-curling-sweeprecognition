@@ -235,10 +235,6 @@ namespace Microsoft {
             INT m_depthBufferSize;
             INT m_depthBufferPitch;
 
-			BYTE* m_pDepthBufferPrev;
-			INT m_depthBufferPrevSize;
-			INT m_depthBufferPrevPitch;
-
             // Image stream resolution information
             NUI_IMAGE_RESOLUTION m_colorResolution;
             NUI_IMAGE_RESOLUTION m_depthResolution;

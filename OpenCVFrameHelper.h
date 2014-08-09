@@ -65,7 +65,6 @@ namespace Microsoft {
             /// <param name="resolution">resolution of image</param>
             /// <returns>S_OK if image matches given width and height, an error code otherwise</returns>
             HRESULT VerifySize(const Mat* pImage, NUI_IMAGE_RESOLUTION resolution) const override;
-
         };
     }
 }

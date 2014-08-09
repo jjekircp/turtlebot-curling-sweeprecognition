@@ -140,7 +140,6 @@ int CMainWindow::Run(HINSTANCE hInstance, int nCmdShow)
     CreateStreamInformationFont();
     CreateColorImage();
     CreateDepthImage();
-	CreateDepthImagePrev();
 
     // Perform Kinect initialization
     // If Kinect initialization succeeded, start the event processing thread
@@ -896,26 +895,6 @@ HRESULT CMainWindow::CreateDepthImage()
     ReleaseMutex(m_hDepthBitmapMutex);
 
     return hr;
-}
-HRESULT CMainWindow::CreateDepthImagePrev()
-{
-	if (m_hDepthBitmapPrev)
-	{
-		DeleteObject(m_hDepthBitmapPrev);
-	}
-
-	DWORD width, height;
-	m_frameHelper.GetDepthFrameSize(&width, &height);
-
-	Size size(width, height);
-	m_depthMatPrev.create(size, m_frameHelper.DEPTH_RGB_TYPE);
-
-	// Create the bitmap
-	WaitForSingleObject(m_hDepthBitmapMutex, INFINITE);
-	HRESULT hr = CreateBitmap(size, &m_hDepthBitmapPrev, &m_bmiDepthPrev, m_pDepthPrevBitmapBits, IDS_ERROR_BITMAP_DEPTH);
-	ReleaseMutex(m_hDepthBitmapMutex);
-
-	return hr;
 }
 
 /// <summary>
