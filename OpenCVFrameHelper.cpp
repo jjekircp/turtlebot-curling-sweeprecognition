@@ -143,3 +143,24 @@ HRESULT OpenCVFrameHelper::VerifySize(const Mat* pImage, NUI_IMAGE_RESOLUTION re
     return S_OK;
 }
 
+// i hope you've already allocated memory for these two Mat*.
+HRESULT OpenCVFrameHelper::SaveOldDepthImage(Mat* pSourceImage, Mat* pDestImage) const
+{
+	DWORD depthHeight, depthWidth;
+	NuiImageResolutionToSize(m_depthResolution, depthWidth, depthHeight);
+	Size size(depthWidth, depthHeight);
+	pDestImage->create(size, DEPTH_RGB_TYPE);
+
+	for (UINT y = 0; y < depthHeight; ++y)
+	{
+		// Get row pointer for depth Mat
+		USHORT* pDepthRow = pDestImage->ptr<USHORT>(y);
+		USHORT* pSourceRow = pSourceImage->ptr<USHORT>(y);
+		for (UINT x = 0; x < depthWidth; ++x)
+		{
+			pDepthRow[x] = pSourceRow[y * depthWidth + x];
+		}
+	}
+
+	return S_OK;
+}

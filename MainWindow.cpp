@@ -140,6 +140,7 @@ int CMainWindow::Run(HINSTANCE hInstance, int nCmdShow)
     CreateStreamInformationFont();
     CreateColorImage();
     CreateDepthImage();
+	CreateDepthImagePrev();
 
     // Perform Kinect initialization
     // If Kinect initialization succeeded, start the event processing thread
@@ -488,9 +489,9 @@ DWORD WINAPI CMainWindow::ProcessThread()
 
             // Start painting again
             ReleaseMutex(m_hPaintWindowMutex);
-
             ResizeWindow();
-            CreateDepthImage();
+			CreateDepthImage();            
+			CreateDepthImagePrev(); 
         }
 
         // Wait for any event to be signalled
@@ -558,7 +559,8 @@ DWORD WINAPI CMainWindow::ProcessThread()
             // Update depth frame
             if (!m_bIsDepthPaused && SUCCEEDED(m_frameHelper.UpdateDepthFrame())) 
             {
-                HRESULT hr = m_frameHelper.GetDepthImageAsArgb(&m_depthMat);
+				HRESULT hr = m_frameHelper.SaveOldDepthImage(&m_depthMat,&m_depthMatPrev);
+                hr = m_frameHelper.GetDepthImageAsArgb(&m_depthMat);
                 if (FAILED(hr))
                 {
                     continue;
@@ -584,6 +586,7 @@ DWORD WINAPI CMainWindow::ProcessThread()
                 // Update bitmap for drawing
                 WaitForSingleObject(m_hDepthBitmapMutex, INFINITE);
                 UpdateBitmap(&m_depthMat, &m_hDepthBitmap, &m_bmiDepth);
+				UpdateBitmap(&m_depthMatPrev, &m_hDepthBitmapPrev, &m_bmiDepth);
                 ReleaseMutex(m_hDepthBitmapMutex);
 
                 // Notify frame rate tracker that new frame has been rendered
@@ -882,19 +885,49 @@ HRESULT CMainWindow::CreateDepthImage()
     {
         DeleteObject(m_hDepthBitmap);
     }
+	if (m_hDepthBitmapPrev)
+	{
+		DeleteObject(m_hDepthBitmapPrev);
+	}
 
     DWORD width, height;
     m_frameHelper.GetDepthFrameSize(&width, &height);
 
     Size size(width, height);
     m_depthMat.create(size, m_frameHelper.DEPTH_RGB_TYPE);
+	m_depthMatPrev.create(size, m_frameHelper.DEPTH_RGB_TYPE);
 
     // Create the bitmap
     WaitForSingleObject(m_hDepthBitmapMutex, INFINITE);
     HRESULT hr = CreateBitmap(size, &m_hDepthBitmap, &m_bmiDepth, m_pDepthBitmapBits, IDS_ERROR_BITMAP_DEPTH);
+	hr = CreateBitmap(size, &m_hDepthBitmapPrev, &m_bmiDepth, m_pDepthBitmapBits, IDS_ERROR_BITMAP_DEPTH);
+
     ReleaseMutex(m_hDepthBitmapMutex);
 
     return hr;
+}
+
+HRESULT CMainWindow::CreateDepthImagePrev()
+{
+	return S_OK;
+
+	//if (m_hDepthBitmapPrev)
+	//{
+	//	DeleteObject(m_hDepthBitmapPrev);
+	//}
+
+	//DWORD width, height;
+	//m_frameHelper.GetDepthFrameSize(&width, &height);
+
+	//Size size(width, height);
+	//m_depthMatPrev.create(size, m_frameHelper.DEPTH_RGB_TYPE);
+
+	//// Create the bitmap
+	//WaitForSingleObject(m_hDepthBitmapMutex, INFINITE);
+	//HRESULT hr = CreateBitmap(size, &m_hDepthBitmapPrev, &m_bmiDepth, m_pDepthBitmapBits, IDS_ERROR_BITMAP_DEPTH);
+	//ReleaseMutex(m_hDepthBitmapMutex);
+
+	//return hr;
 }
 
 /// <summary>

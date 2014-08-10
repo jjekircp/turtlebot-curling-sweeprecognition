@@ -154,6 +154,7 @@ private:
     /// </summary>
     /// <returns>S_OK if successful, E_FAIL otherwise</returns>
     HRESULT CreateDepthImage();
+	HRESULT CreateDepthImagePrev();
 
     /// <summary>
     /// Initializes the specified bitmap to the specified size
@@ -267,6 +268,7 @@ private:
 	// OpenCV matrices
 	Mat m_colorMat;
 	Mat m_depthMat;
+	Mat m_depthMatPrev;
 
     // Bitmaps
     BITMAPINFO m_bmiColor;
@@ -276,6 +278,7 @@ private:
     BITMAPINFO m_bmiDepth;
     void* m_pDepthBitmapBits;
     HBITMAP m_hDepthBitmap;
+	HBITMAP m_hDepthBitmapPrev;
 
     // Window processing thread handles
     HANDLE m_hProcessStopEvent;

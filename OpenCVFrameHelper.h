@@ -34,7 +34,9 @@ namespace Microsoft {
             static const int COLOR_TYPE = CV_8UC4;
             static const int DEPTH_TYPE = CV_16U;
             static const int DEPTH_RGB_TYPE = CV_8UC4;
-
+			// TODO figure out why the hell this had to be public - this makes no sense
+			// as its "twin" GetDepthData is protected and this works fine from MainWindow.cpp
+			HRESULT SaveOldDepthImage(Mat* pOldImage, Mat* pNewImage) const;
         protected:
             // Functions:
             /// <summary>
@@ -51,6 +53,7 @@ namespace Microsoft {
             /// <returns>S_OK if successful, an error code otherwise</returns>
             HRESULT GetDepthData(Mat* pImage) const override;
 
+
             /// <summary>
             /// Converts from Kinect depth frame data into a ARGB OpenCV image matrix
             /// </summary>
@@ -65,6 +68,9 @@ namespace Microsoft {
             /// <param name="resolution">resolution of image</param>
             /// <returns>S_OK if image matches given width and height, an error code otherwise</returns>
             HRESULT VerifySize(const Mat* pImage, NUI_IMAGE_RESOLUTION resolution) const override;
+
+
+
         };
     }
 }
