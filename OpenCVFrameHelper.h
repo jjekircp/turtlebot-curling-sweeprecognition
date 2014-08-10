@@ -22,7 +22,7 @@ namespace Microsoft {
             /// <summary>
             /// Constructor
             /// </summary>
-            OpenCVFrameHelper() : KinectHelper<Mat>() {}
+			OpenCVFrameHelper() : KinectHelper<Mat>()  { frameCount = 0; }
 
             /// <summary>
             /// Destructor
@@ -59,7 +59,7 @@ namespace Microsoft {
             /// </summary>
             /// <param name="pImage">pointer in which to return the OpenCV image matrix</param>
             /// <returns>S_OK if successful, an error code otherwise</returns>
-            HRESULT GetDepthDataAsArgb(Mat* pImage, Mat* pImagePrev) const override;
+            HRESULT GetDepthDataAsArgb(Mat* pImage, Mat* pImagePrev) override;
 
             /// <summary>
             /// Verify image is of the given resolution
@@ -69,7 +69,8 @@ namespace Microsoft {
             /// <returns>S_OK if image matches given width and height, an error code otherwise</returns>
             HRESULT VerifySize(const Mat* pImage, NUI_IMAGE_RESOLUTION resolution) const override;
 
-
+		public:
+			int frameCount;
 
         };
     }

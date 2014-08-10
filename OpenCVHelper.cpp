@@ -22,8 +22,8 @@ const Scalar OpenCVHelper::SKELETON_COLORS[NUI_SKELETON_COUNT] =
 /// Constructor
 /// </summary>
 OpenCVHelper::OpenCVHelper() :
-    m_depthFilterID(-1),
-    m_colorFilterID(-1)
+m_depthFilterID(-1),
+m_colorFilterID(-1)
 {
 }
 
