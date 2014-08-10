@@ -22,7 +22,7 @@ namespace Microsoft {
             /// <summary>
             /// Constructor
             /// </summary>
-			OpenCVFrameHelper() : KinectHelper<Mat>()  { frameCount = 0; }
+			OpenCVFrameHelper() : KinectHelper<Mat>()  { frameCount = 1; }
 
             /// <summary>
             /// Destructor
@@ -59,7 +59,7 @@ namespace Microsoft {
             /// </summary>
             /// <param name="pImage">pointer in which to return the OpenCV image matrix</param>
             /// <returns>S_OK if successful, an error code otherwise</returns>
-            HRESULT GetDepthDataAsArgb(Mat* pImage, Mat* pImagePrev) override;
+			HRESULT GetDepthDataAsArgb(Mat* pImage, Mat* pImagePrev, Mat* pDelta1Image, Mat* pDelta2Image) override;
 
             /// <summary>
             /// Verify image is of the given resolution

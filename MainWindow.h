@@ -269,6 +269,8 @@ private:
 	Mat m_colorMat;
 	Mat m_depthMat;
 	Mat m_depthMatPrev;
+	Mat m_depthMatDelta1;
+	Mat m_depthMatDelta2;
 
     // Bitmaps
     BITMAPINFO m_bmiColor;

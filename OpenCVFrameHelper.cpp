@@ -83,7 +83,7 @@ HRESULT OpenCVFrameHelper::GetDepthData(Mat* pImage) const
 /// </summary>
 /// <param name="pImage">pointer in which to return the OpenCV image matrix</param>
 /// <returns>S_OK if successful, an error code otherwise</returns>
-HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage)
+HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage, Mat* pDelta1Image, Mat* pDelta2Image)
 {
     DWORD depthWidth, depthHeight;
     NuiImageResolutionToSize(m_depthResolution, depthWidth, depthHeight);
@@ -95,41 +95,35 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage)
     if (!SUCCEEDED(hr)) {
         return hr;
     }
-	Mat prevImage = pPrevImage->clone();
 
-	Mat deltaImage1;
-	Mat deltaImage2;
+	//Mat deltaImage1 = pDelta1Image->clone();
+	Mat deltaImage2 = pDelta1Image->clone();
 	Mat deltaDeltaImage;
-	deltaDeltaImage = depthImage;
+	
 	// after receiving frames 1th and 2nd we calculate this image
-	if (frameCount % 1 == 0)
+	if (frameCount % 2 == 0)
 	{
-		deltaImage1 = depthImage - prevImage;
+		*pDelta1Image = depthImage - *pPrevImage;
 	}
 	// after receiving frames 3rd and 4th we calculate this image
-	if (frameCount % 3 == 0)
+	if (frameCount % 4 == 0)
 	{
-		deltaImage2 = depthImage - prevImage;
-		deltaDeltaImage = deltaImage2 - deltaImage1;
+		*pDelta2Image = depthImage - *pPrevImage;
 		frameCount = 0;
 	}
-
-
+	deltaDeltaImage = *pDelta2Image - *pDelta1Image;
 
 	for (UINT y = 0; y < depthHeight; ++y)
     {
         // Get row pointers for Mats
         const USHORT* pDepthRow = deltaDeltaImage.ptr<USHORT>(y); // from the sensor
         Vec4b* pDepthRgbRow = pImage->ptr<Vec4b>(y); // buffer in the program we are populating
-		Vec4b* pDepthRgbRowPrev = pPrevImage->ptr<Vec4b>(y); // previous frame
-
 
         for (UINT x = 0; x < depthWidth; ++x)
         {
             USHORT raw_depth = pDepthRow[x];
-			USHORT raw_depth_prev = pDepthRow[x];
             // If depth value is valid, convert and copy it
-            if (raw_depth != 65535 && raw_depth_prev != 65535)
+            if (raw_depth != 65535)
             {
                 UINT8 redPixel, greenPixel, bluePixel;
                 DepthShortToRgb(raw_depth, &redPixel, &greenPixel, &bluePixel);

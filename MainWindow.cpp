@@ -491,7 +491,7 @@ DWORD WINAPI CMainWindow::ProcessThread()
             ReleaseMutex(m_hPaintWindowMutex);
             ResizeWindow();
 			CreateDepthImage();            
-			CreateDepthImagePrev(); 
+			//CreateDepthImagePrev(); 
         }
 
         // Wait for any event to be signalled
@@ -560,7 +560,7 @@ DWORD WINAPI CMainWindow::ProcessThread()
             if (!m_bIsDepthPaused && SUCCEEDED(m_frameHelper.UpdateDepthFrame())) 
             {
 				HRESULT hr = m_frameHelper.SaveOldDepthImage(&m_depthMat,&m_depthMatPrev);
-                hr = m_frameHelper.GetDepthImageAsArgb(&m_depthMat, &m_depthMatPrev);
+                hr = m_frameHelper.GetDepthImageAsArgb(&m_depthMat, &m_depthMatPrev,&m_depthMatDelta1,&m_depthMatDelta2);
                 if (FAILED(hr))
                 {
                     continue;
@@ -895,7 +895,6 @@ HRESULT CMainWindow::CreateDepthImage()
 
     Size size(width, height);
     m_depthMat.create(size, m_frameHelper.DEPTH_RGB_TYPE);
-	m_depthMatPrev.create(size, m_frameHelper.DEPTH_TYPE);
 
     // Create the bitmap
     WaitForSingleObject(m_hDepthBitmapMutex, INFINITE);
@@ -909,6 +908,13 @@ HRESULT CMainWindow::CreateDepthImage()
 
 HRESULT CMainWindow::CreateDepthImagePrev()
 {
+	DWORD width, height;
+	m_frameHelper.GetDepthFrameSize(&width, &height);
+
+	Size size(width, height);
+	m_depthMatPrev.create(size, m_frameHelper.DEPTH_TYPE);
+	m_depthMatDelta1.create(size, m_frameHelper.DEPTH_TYPE);
+	m_depthMatDelta2.create(size, m_frameHelper.DEPTH_TYPE);
 	return S_OK;
 
 	//if (m_hDepthBitmapPrev)
