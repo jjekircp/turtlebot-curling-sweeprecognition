@@ -41,6 +41,12 @@
     <ClInclude Include="FrameRateTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ros_lib\ros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ros_lib\WindowsSocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OpenCVHelper.cpp">
@@ -53,6 +59,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FrameRateTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ros_lib\duration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ros_lib\time.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ros_lib\WindowsSocket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -105,8 +105,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Demo\Desktop\KinectBridgeWithOpenCVBasics-D2D\ros_lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -179,6 +178,8 @@
     <ClInclude Include="OpenCVFrameHelper.h" />
     <ClInclude Include="OpenCVHelper.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ros_lib\ros.h" />
+    <ClInclude Include="ros_lib\WindowsSocket.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +187,9 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="OpenCVFrameHelper.cpp" />
     <ClCompile Include="OpenCVHelper.cpp" />
+    <ClCompile Include="ros_lib\duration.cpp" />
+    <ClCompile Include="ros_lib\time.cpp" />
+    <ClCompile Include="ros_lib\WindowsSocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />

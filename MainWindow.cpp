@@ -5,6 +5,16 @@
 //-----------------------------------------------------------------------------
 
 #include "MainWindow.h"
+#include <ros.h>
+#include <std_msgs/Float32.h>
+
+
+ros::NodeHandle nh;
+std_msgs::Float32 float_msg;
+ros::Publisher sweep_pub("sweep", &float_msg);
+char rosSrvrIp[20];
+char* port = "11411";
+
 
 using namespace cv;
 using namespace Microsoft::KinectBridge;
@@ -120,6 +130,10 @@ CMainWindow::~CMainWindow()
 /// <returns>WPARAM of final message as int</returns>
 int CMainWindow::Run(HINSTANCE hInstance, int nCmdShow)
 {
+
+	sprintf_s(rosSrvrIp, "192.168.1.134");
+	nh.initNode(rosSrvrIp, port);
+	nh.advertise(sweep_pub);
     // Create application window
     if (FAILED(CreateMainWindow(hInstance)))
     {
@@ -170,6 +184,7 @@ int CMainWindow::Run(HINSTANCE hInstance, int nCmdShow)
         // Process message
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+		nh.spinOnce();
     }
 
     return static_cast<int>(msg.wParam);
@@ -419,6 +434,7 @@ DWORD WINAPI CMainWindow::ProcessThread(LPVOID lpParam)
 /// <returns>0</returns>
 DWORD WINAPI CMainWindow::ProcessThread()
 {
+
     // Store local copies of resolutions to check for changes
     NUI_IMAGE_RESOLUTION colorResolution = m_colorResolution;
     NUI_IMAGE_RESOLUTION depthResolution = m_depthResolution;
@@ -561,10 +577,16 @@ DWORD WINAPI CMainWindow::ProcessThread()
             {
 				HRESULT hr = m_frameHelper.SaveOldDepthImage(&m_depthMat,&m_depthMatPrev);
                 hr = m_frameHelper.GetDepthImageAsArgb(&m_depthMat, &m_depthMatPrev,&m_depthMatDelta1,&m_depthMatDelta2);
-                if (FAILED(hr))
-                {
-                    continue;
-                }
+
+
+				static TCHAR szRes[15];
+
+				float_msg.data = (float)((int)hr);
+				if ((int)hr > 1) sweep_pub.publish(&float_msg);
+
+				swprintf(&szRes[0], (wchar_t*)"Median: %d", (int)hr);
+				SendMessageW(m_hWndStatus, SB_SETTEXT, 0, reinterpret_cast<LPARAM>(szRes));
+
 
                 // Apply filter to depth stream
                 hr = m_openCVHelper.ApplyDepthFilter(&m_depthMat);
@@ -599,6 +621,7 @@ DWORD WINAPI CMainWindow::ProcessThread()
             ReleaseMutex(m_hPaintWindowMutex);
         }
     }
+	nh.spinOnce();
 
     return 0;
 }

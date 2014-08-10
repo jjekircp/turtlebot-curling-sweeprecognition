@@ -96,8 +96,6 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage, Mat*
         return hr;
     }
 
-	//Mat deltaImage1 = pDelta1Image->clone();
-	Mat deltaImage2 = pDelta1Image->clone();
 	Mat deltaDeltaImage;
 	
 	// after receiving frames 1th and 2nd we calculate this image
@@ -113,6 +111,8 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage, Mat*
 	}
 	deltaDeltaImage = *pDelta2Image - *pDelta1Image;
 
+	int x_median = 0;
+	int counter = 1;
 	for (UINT y = 0; y < depthHeight; ++y)
     {
         // Get row pointers for Mats
@@ -127,6 +127,9 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage, Mat*
             {
                 UINT8 redPixel, greenPixel, bluePixel;
                 DepthShortToRgb(raw_depth, &redPixel, &greenPixel, &bluePixel);
+				if (redPixel + greenPixel + bluePixel < 127*3){
+					counter++;
+				}
 				pDepthRgbRow[x] = Vec4b(redPixel, greenPixel, bluePixel, 1);
             }
             else
@@ -135,9 +138,15 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage, Mat*
             }
         }
     }
+	x_median = counter;
 	pPrevImage = &(depthImage.clone());
+	
+
+	//pImage->at<Vec4b>(Point(x_median, 100)) = Vec4b(255, 0, 0, 1);
+
+
 	frameCount++;
-    return S_OK;
+    return (HRESULT)x_median;
 }
 
 /// <summary>
