@@ -95,11 +95,16 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage) cons
     if (!SUCCEEDED(hr)) {
         return hr;
     }
+	Mat prevImage = pPrevImage->clone();
+
+	Mat deltaImage1 = depthImage - prevImage;
+
 	
+
 	for (UINT y = 0; y < depthHeight; ++y)
     {
         // Get row pointers for Mats
-        const USHORT* pDepthRow = depthImage.ptr<USHORT>(y); // from the sensor
+        const USHORT* pDepthRow = deltaImage1.ptr<USHORT>(y); // from the sensor
         Vec4b* pDepthRgbRow = pImage->ptr<Vec4b>(y); // buffer in the program we are populating
 		Vec4b* pDepthRgbRowPrev = pPrevImage->ptr<Vec4b>(y); // previous frame
 
@@ -113,7 +118,7 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage) cons
             {
                 UINT8 redPixel, greenPixel, bluePixel;
                 DepthShortToRgb(raw_depth, &redPixel, &greenPixel, &bluePixel);
-				pDepthRgbRow[x] = Vec4b(redPixel, greenPixel, bluePixel, 1) - pDepthRgbRowPrev[x];
+				pDepthRgbRow[x] = Vec4b(redPixel, greenPixel, bluePixel, 1);
             }
             else
             {
@@ -121,7 +126,7 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage) cons
             }
         }
     }
-
+	pPrevImage = &(depthImage.clone());
     return S_OK;
 }
 
@@ -148,23 +153,5 @@ HRESULT OpenCVFrameHelper::VerifySize(const Mat* pImage, NUI_IMAGE_RESOLUTION re
 // i hope you've already allocated memory for these two Mat*.
 HRESULT OpenCVFrameHelper::SaveOldDepthImage(Mat* pSourceImage, Mat* pDestImage) const
 {
-	Mat testMatrix = pSourceImage->clone();
-	pDestImage = &testMatrix;
-	//DWORD depthHeight, depthWidth;
-	//NuiImageResolutionToSize(m_depthResolution, depthWidth, depthHeight);
-	//Size size(depthWidth, depthHeight);
-	//pDestImage->create(size, DEPTH_RGB_TYPE);
-
-	//for (UINT y = 0; y < depthHeight; ++y)
-	//{
-	//	// Get row pointer for depth Mat
-	//	USHORT* pDepthRow = pDestImage->ptr<USHORT>(y);
-	//	USHORT* pSourceRow = pSourceImage->ptr<USHORT>(y);
-	//	for (UINT x = 0; x < depthWidth; ++x)
-	//	{
-	//		pDepthRow[x] = pSourceRow[y * depthWidth + x];
-	//	}
-	//}
-
 	return S_OK;
 }

@@ -895,7 +895,7 @@ HRESULT CMainWindow::CreateDepthImage()
 
     Size size(width, height);
     m_depthMat.create(size, m_frameHelper.DEPTH_RGB_TYPE);
-	m_depthMatPrev.create(size, m_frameHelper.DEPTH_RGB_TYPE);
+	m_depthMatPrev.create(size, m_frameHelper.DEPTH_TYPE);
 
     // Create the bitmap
     WaitForSingleObject(m_hDepthBitmapMutex, INFINITE);
