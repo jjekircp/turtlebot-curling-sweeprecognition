@@ -83,7 +83,7 @@ HRESULT OpenCVFrameHelper::GetDepthData(Mat* pImage) const
 /// </summary>
 /// <param name="pImage">pointer in which to return the OpenCV image matrix</param>
 /// <returns>S_OK if successful, an error code otherwise</returns>
-HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage) const
+HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage) const
 {
     DWORD depthWidth, depthHeight;
     NuiImageResolutionToSize(m_depthResolution, depthWidth, depthHeight);

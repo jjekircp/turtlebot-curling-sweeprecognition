@@ -59,7 +59,7 @@ namespace Microsoft {
             /// </summary>
             /// <param name="pImage">pointer in which to return the OpenCV image matrix</param>
             /// <returns>S_OK if successful, an error code otherwise</returns>
-            HRESULT GetDepthDataAsArgb(Mat* pImage) const override;
+            HRESULT GetDepthDataAsArgb(Mat* pImage, Mat* pImagePrev) const override;
 
             /// <summary>
             /// Verify image is of the given resolution

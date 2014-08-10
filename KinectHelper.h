@@ -184,7 +184,7 @@ namespace Microsoft {
             /// </summary>
             /// <param name="pDepthArgbImage">pointer in which to return the image</param>
             /// <returns>S_OK if successful, an error code otherwise</returns>
-            HRESULT GetDepthImageAsArgb(Image* pDepthArgbImage) const;
+            HRESULT GetDepthImageAsArgb(Image* pDepthArgbImage, Image* pImagePrev) const;
 
         protected:
             // Functions:
@@ -207,7 +207,7 @@ namespace Microsoft {
             /// </summary>
             /// <param name="pImage">pointer in which to return the image data</param>
             /// <returns>S_OK if successful, an error code otherwise</returns>
-            virtual HRESULT GetDepthDataAsArgb(Image* pImage) const = 0;
+            virtual HRESULT GetDepthDataAsArgb(Image* pImage, Image* pImagePrev) const = 0;
 
             /// <summary>
             /// Verify image is of the given resolution
@@ -1108,7 +1108,7 @@ namespace Microsoft {
         /// <param name="pDepthArgbImage">pointer in which to return the image</param>
         /// <returns>S_OK if successful, an error code otherwise</returns>
         template <typename Image>
-        HRESULT KinectHelper<Image>::GetDepthImageAsArgb(Image* pDepthArgbImage) const
+        HRESULT KinectHelper<Image>::GetDepthImageAsArgb(Image* pDepthArgbImage, Image* pPrevImage) const
         {
             // Fail if Kinect is not initialized
             if (!m_pNuiSensor) 
@@ -1136,7 +1136,7 @@ namespace Microsoft {
             }
 
             // Update output Mat to correct size
-            hr = GetDepthDataAsArgb(pDepthArgbImage);
+            hr = GetDepthDataAsArgb(pDepthArgbImage, pPrevImage);
 
             return hr;
         }

@@ -560,7 +560,7 @@ DWORD WINAPI CMainWindow::ProcessThread()
             if (!m_bIsDepthPaused && SUCCEEDED(m_frameHelper.UpdateDepthFrame())) 
             {
 				HRESULT hr = m_frameHelper.SaveOldDepthImage(&m_depthMat,&m_depthMatPrev);
-                hr = m_frameHelper.GetDepthImageAsArgb(&m_depthMat);
+                hr = m_frameHelper.GetDepthImageAsArgb(&m_depthMat, &m_depthMatPrev);
                 if (FAILED(hr))
                 {
                     continue;
