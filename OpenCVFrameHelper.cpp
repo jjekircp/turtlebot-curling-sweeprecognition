@@ -99,19 +99,25 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage) cons
     for (UINT y = 0; y < depthHeight; ++y)
     {
         // Get row pointers for Mats
-        const USHORT* pDepthRow = depthImage.ptr<USHORT>(y);
-        Vec4b* pDepthRgbRow = pImage->ptr<Vec4b>(y);
+        const USHORT* pDepthRow = depthImage.ptr<USHORT>(y); // from the sensor
+        Vec4b* pDepthRgbRow = pImage->ptr<Vec4b>(y); // buffer in the program we are populating
+		Vec4b* pDepthRgbRowPrev = pPrevImage->ptr<Vec4b>(y); // previous frame
 
         for (UINT x = 0; x < depthWidth; ++x)
         {
             USHORT raw_depth = pDepthRow[x];
-
+			USHORT raw_depth_prev = pDepthRow[x];
             // If depth value is valid, convert and copy it
-            if (raw_depth != 65535)
+            if (raw_depth != 65535 && raw_depth_prev != 65535)
             {
                 UINT8 redPixel, greenPixel, bluePixel;
+				UINT8 redPixelPrev, greenPixelPrev, bluePixelPrev;
                 DepthShortToRgb(raw_depth, &redPixel, &greenPixel, &bluePixel);
-                pDepthRgbRow[x] = Vec4b(redPixel, greenPixel, bluePixel, 1);
+				Vec4b currentFrameValue(redPixel, greenPixel, bluePixel, 1);
+				DepthShortToRgb(raw_depth_prev, &redPixelPrev, &greenPixelPrev, &bluePixelPrev);
+				Vec4b lastFrameValue(redPixelPrev, greenPixelPrev, bluePixelPrev, 1);
+				//pDepthRgbRow[x] = currentFrameValue;// -lastFrameValue;
+				pDepthRgbRow[x] = currentFrameValue;
             }
             else
             {
