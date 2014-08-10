@@ -97,14 +97,29 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage, Mat* pPrevImage)
     }
 	Mat prevImage = pPrevImage->clone();
 
-	Mat deltaImage1 = depthImage - prevImage;
+	Mat deltaImage1;
+	Mat deltaImage2;
+	Mat deltaDeltaImage;
+	deltaDeltaImage = depthImage;
+	// after receiving frames 1th and 2nd we calculate this image
+	if (frameCount % 1 == 0)
+	{
+		deltaImage1 = depthImage - prevImage;
+	}
+	// after receiving frames 3rd and 4th we calculate this image
+	if (frameCount % 3 == 0)
+	{
+		deltaImage2 = depthImage - prevImage;
+		deltaDeltaImage = deltaImage2 - deltaImage1;
+		frameCount = 0;
+	}
 
-	
+
 
 	for (UINT y = 0; y < depthHeight; ++y)
     {
         // Get row pointers for Mats
-        const USHORT* pDepthRow = deltaImage1.ptr<USHORT>(y); // from the sensor
+        const USHORT* pDepthRow = deltaDeltaImage.ptr<USHORT>(y); // from the sensor
         Vec4b* pDepthRgbRow = pImage->ptr<Vec4b>(y); // buffer in the program we are populating
 		Vec4b* pDepthRgbRowPrev = pPrevImage->ptr<Vec4b>(y); // previous frame
 
